@@ -1,0 +1,64 @@
+.canvas {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: crosshair;
+  background: #fafafa;
+  position: relative;
+}
+
+.gridBackground {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+}
+
+.selected {
+  filter: drop-shadow(0 0 4px rgba(124, 58, 237, 0.4)) drop-shadow(0 0 8px rgba(124, 58, 237, 0.2));
+  cursor: move;
+}
+
+.selectionBorder {
+  fill: none;
+  stroke: #7c3aed;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 3;
+  animation: marchingAnts 0.5s linear infinite;
+  pointer-events: none;
+}
+
+.selectionHandles {
+  fill: white;
+  stroke: #7c3aed;
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+@keyframes marchingAnts {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -9;
+  }
+}
+
+.marqueeBox {
+  fill: rgba(124, 58, 237, 0.1);
+  stroke: #7c3aed;
+  stroke-width: 1;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}

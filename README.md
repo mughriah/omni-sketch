@@ -56,41 +56,6 @@
 
 ---
 
-## 🚀 Kurulum
-
-### Gereksinimler
-- Node.js 18+ veya Bun
-- npm, yarn, pnpm veya bun paket yöneticisi
-
-### Adımlar
-
-1. **Repoyu klonlayın**
-```bash
-git clone https://github.com/username/omni-sketch.git
-cd omni-sketch
-```
-
-2. **Bağımlılıkları yükleyin**
-```bash
-npm install
-# veya
-bun install
-```
-
-3. **Geliştirme sunucusunu başlatın**
-```bash
-npm run dev
-# veya
-bun dev
-```
-
-4. **Tarayıcıda açın**
-```
-http://localhost:3000
-```
-
----
-
 ## 📖 Kullanım
 
 ### Temel İşlemler
@@ -123,31 +88,6 @@ http://localhost:3000
 | **perfect-freehand** | Doğal kalem çizgileri |
 | **nanoid** | Benzersiz ID üretimi |
 | **CSS Modules** | Scoped styling |
-
----
-
-## 📁 Proje Yapısı
-
-```
-omni-sketch/
-├── app/
-│   ├── components/        # React bileşenleri
-│   │   ├── Canvas.tsx     # Ana çizim alanı
-│   │   ├── Toolbar.tsx    # Araç çubuğu
-│   │   ├── Controls.tsx   # Zoom ve kontroller
-│   │   ├── ColorPicker.tsx # Renk seçici
-│   │   ├── ExportPanel.tsx # Dışa aktarma paneli
-│   │   └── Toast.tsx      # Bildirim sistemi
-│   ├── store/             # Zustand store'ları
-│   │   ├── canvasStore.ts # Canvas state
-│   │   └── toastStore.ts  # Toast state
-│   ├── types/             # TypeScript tipleri
-│   ├── utils/             # Yardımcı fonksiyonlar
-│   ├── page.tsx           # Ana sayfa
-│   └── globals.css        # Global stiller
-├── public/                # Statik dosyalar
-└── package.json
-```
 
 ---
 

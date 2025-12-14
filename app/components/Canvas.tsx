@@ -41,10 +41,43 @@ export default function Canvas() {
     copySelectedElements,
     cutSelectedElements,
     pasteElements,
+    setSelectedTool,
   } = useCanvasStore();
 
   const isPanning = useRef(false);
   const lastPanPoint = useRef<Point>({ x: 0, y: 0 });
+  const previousToolRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      if ((e.key === 'Control' || e.key === 'Meta') && selectedTool !== 'select' && selectedTool !== 'eraser' && !previousToolRef.current) {
+        previousToolRef.current = selectedTool;
+        setSelectedTool('select');
+        return;
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if ((e.key === 'Control' || e.key === 'Meta') && previousToolRef.current) {
+        const { selectedElementIds } = useCanvasStore.getState();
+        if (selectedElementIds.length === 0) {
+          setSelectedTool(previousToolRef.current as 'pen' | 'rectangle' | 'ellipse' | 'line' | 'arrow' | 'select' | 'eraser');
+        }
+        previousToolRef.current = null;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [selectedTool, setSelectedTool]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -518,6 +551,24 @@ export default function Canvas() {
   const gridOffsetX = ((panOffset.x % (gridSize * zoom)) + gridSize * zoom) % (gridSize * zoom);
   const gridOffsetY = ((panOffset.y % (gridSize * zoom)) + gridSize * zoom) % (gridSize * zoom);
 
+  const getCursor = () => {
+    switch (selectedTool) {
+      case 'pen':
+        return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z' fill='white' stroke='%231e1e1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='m15 5 4 4' fill='none' stroke='%231e1e1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 2 22, crosshair`;
+      case 'eraser':
+        return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21' fill='white' stroke='%231e1e1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 21H7' fill='none' stroke='%231e1e1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='m5 11 9 9' fill='none' stroke='%231e1e1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 2 22, crosshair`;
+      case 'select':
+        return 'default';
+      case 'rectangle':
+      case 'ellipse':
+      case 'line':
+      case 'arrow':
+        return 'crosshair';
+      default:
+        return 'crosshair';
+    }
+  };
+
   return (
     <div
       ref={canvasRef}
@@ -526,7 +577,7 @@ export default function Canvas() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: 'none', cursor: getCursor() }}
     >
       <svg className={styles.gridBackground}>
         <defs>

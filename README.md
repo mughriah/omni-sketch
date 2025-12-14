@@ -9,7 +9,7 @@
 ![Zustand](https://img.shields.io/badge/Zustand-State-orange?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-[Demo](#demo) • [Özellikler](#-özellikler) • [Kurulum](#-kurulum) • [Kullanım](#-kullanım) • [Teknolojiler](#-teknolojiler)
+[Demo](#demo) • [Özellikler](#-özellikler) • [Kullanım](#-kullanım) • [Teknolojiler](#-teknolojiler)
 
 </div>
 

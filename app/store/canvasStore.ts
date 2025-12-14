@@ -32,6 +32,7 @@ interface CanvasStore {
   initialElementsState: Element[] | null;
   currentElement: Element | null;
   selectedElementIds: string[];
+  clipboard: Element[];
 
   setSelectedTool: (tool: Tool) => void;
   setStrokeColor: (color: string) => void;
@@ -49,7 +50,7 @@ interface CanvasStore {
   finishDragging: () => void;
   
   startResizing: (point: Point, handle: ResizeHandle) => void;
-  continueResizing: (point: Point) => void;
+  continueResizing: (point: Point, shiftKey?: boolean) => void;
   finishResizing: () => void;
   
   startMarqueeSelection: (point: Point) => void;
@@ -64,6 +65,10 @@ interface CanvasStore {
   selectElementsInBox: (box: SelectionBox) => void;
   clearSelection: () => void;
   deleteSelectedElements: () => void;
+  selectAll: () => void;
+  copySelectedElements: () => void;
+  cutSelectedElements: () => void;
+  pasteElements: () => void;
   
   undo: () => void;
   redo: () => void;
@@ -92,6 +97,7 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
   initialElementsState: null,
   currentElement: null,
   selectedElementIds: [],
+  clipboard: [],
 
   setSelectedTool: (tool) => set({ selectedTool: tool, selectedElementIds: [] }),
   setStrokeColor: (color) => set({ strokeColor: color }),
@@ -262,6 +268,73 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
     get().saveToHistory();
   },
 
+  selectAll: () => {
+    const { elements } = get();
+    set({ 
+      selectedElementIds: elements.map((el) => el.id),
+      selectedTool: 'select',
+    });
+  },
+
+  copySelectedElements: () => {
+    const { selectedElementIds, elements } = get();
+    if (selectedElementIds.length === 0) return;
+    
+    const selectedElements = elements.filter((el) => selectedElementIds.includes(el.id));
+    const copiedElements = JSON.parse(JSON.stringify(selectedElements));
+    set({ clipboard: copiedElements });
+  },
+
+  cutSelectedElements: () => {
+    const { selectedElementIds, elements } = get();
+    if (selectedElementIds.length === 0) return;
+    
+    const selectedElements = elements.filter((el) => selectedElementIds.includes(el.id));
+    const copiedElements = JSON.parse(JSON.stringify(selectedElements));
+    set({ clipboard: copiedElements });
+    
+    set((state) => ({
+      elements: state.elements.filter((el) => !selectedElementIds.includes(el.id)),
+      selectedElementIds: [],
+    }));
+    get().saveToHistory();
+  },
+
+  pasteElements: () => {
+    const { clipboard } = get();
+    if (clipboard.length === 0) return;
+    
+    const pasteOffset = 20;
+    
+    const newElements: Element[] = clipboard.map((el) => {
+      const newId = createId();
+      
+      if (el.type === 'pen' && el.points) {
+        return {
+          ...el,
+          id: newId,
+          points: el.points.map((p) => ({ x: p.x + pasteOffset, y: p.y + pasteOffset })),
+        };
+      } else {
+        return {
+          ...el,
+          id: newId,
+          x: (el.x || 0) + pasteOffset,
+          y: (el.y || 0) + pasteOffset,
+        };
+      }
+    });
+    
+    set((state) => ({
+      elements: [...state.elements, ...newElements],
+      selectedElementIds: newElements.map((el) => el.id),
+      selectedTool: 'select',
+    }));
+    
+    set({ clipboard: JSON.parse(JSON.stringify(newElements)) });
+    get().saveToHistory();
+  },
+
   startDragging: (point) => {
     set({ isDragging: true, dragStartPoint: point });
   },
@@ -318,7 +391,7 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
     });
   },
 
-  continueResizing: (point) => {
+  continueResizing: (point, shiftKey = false) => {
     const { isResizing, resizeHandle, dragStartPoint, selectedElementIds, initialElementsState } = get();
     
     if (!isResizing || !resizeHandle || !dragStartPoint || selectedElementIds.length === 0 || !initialElementsState) return;
@@ -396,6 +469,12 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
 
     if (scaleX <= 0.1) scaleX = 0.1;
     if (scaleY <= 0.1) scaleY = 0.1;
+
+    if (shiftKey && (resizeHandle === 'nw' || resizeHandle === 'ne' || resizeHandle === 'sw' || resizeHandle === 'se')) {
+      const uniformScale = Math.max(scaleX, scaleY);
+      scaleX = uniformScale;
+      scaleY = uniformScale;
+    }
 
     const updatedElements = initialElementsState.map((element) => {
       if (!selectedElementIds.includes(element.id)) {

@@ -24,6 +24,8 @@ export default function SelectionInfo() {
 
   const selectedElements = elements.filter((el) => selectedElementIds.includes(el.id));
   
+  if (selectedElements.length === 0) return null;
+  
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   
   for (const element of selectedElements) {
@@ -43,10 +45,10 @@ export default function SelectionInfo() {
 
   const firstElement = selectedElements[0];
   const commonStrokeColor = selectedElements.every((el) => el.strokeColor === firstElement?.strokeColor)
-    ? firstElement?.strokeColor
+    ? firstElement?.strokeColor || '#1e1e1e'
     : '#1e1e1e';
   const commonFillColor = selectedElements.every((el) => el.fillColor === firstElement?.fillColor)
-    ? firstElement?.fillColor
+    ? firstElement?.fillColor || 'transparent'
     : 'transparent';
 
   const handleStrokeColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {

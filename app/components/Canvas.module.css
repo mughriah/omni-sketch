@@ -43,7 +43,12 @@
   fill: white;
   stroke: #7c3aed;
   stroke-width: 1.5;
-  pointer-events: none;
+  pointer-events: auto;
+  transition: fill 0.15s ease;
+}
+
+.selectionHandles:hover {
+  fill: #7c3aed;
 }
 
 @keyframes marchingAnts {

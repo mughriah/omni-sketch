@@ -37,10 +37,46 @@ export default function Canvas() {
     selectElement,
     deleteElement,
     setPanOffset,
+    selectAll,
+    copySelectedElements,
+    cutSelectedElements,
+    pasteElements,
   } = useCanvasStore();
 
   const isPanning = useRef(false);
   const lastPanPoint = useRef<Point>({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key.toLowerCase()) {
+          case 'a':
+            e.preventDefault();
+            selectAll();
+            break;
+          case 'c':
+            e.preventDefault();
+            copySelectedElements();
+            break;
+          case 'x':
+            e.preventDefault();
+            cutSelectedElements();
+            break;
+          case 'v':
+            e.preventDefault();
+            pasteElements();
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectAll, copySelectedElements, cutSelectedElements, pasteElements]);
 
   const getPointerPosition = useCallback(
     (e: React.PointerEvent | PointerEvent): Point => {
@@ -166,7 +202,7 @@ export default function Canvas() {
 
       if (isResizing && selectedTool === 'select') {
         const point = getPointerPosition(e);
-        continueResizing(point);
+        continueResizing(point, e.shiftKey);
         return;
       }
 
@@ -227,6 +263,11 @@ export default function Canvas() {
         
         useCanvasStore.getState().setZoom(newZoom);
         setPanOffset({ x: newPanOffsetX, y: newPanOffsetY });
+      } else if (e.shiftKey) {
+        setPanOffset({
+          x: panOffset.x - e.deltaY,
+          y: panOffset.y,
+        });
       } else {
         setPanOffset({
           x: panOffset.x - e.deltaX,

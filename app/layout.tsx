@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Omni Sketch",
+  title: "OmniSketch",
   description: "A simple and intuitive drawing application.",
 };
 

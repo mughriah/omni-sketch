@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { ResizeHandle, useCanvasStore } from '../store/canvasStore';
 import { Element, Point } from '../types';
 import { BoundingBox, getElementAtPosition, getElementBounds, getStrokePath, screenToCanvas } from '../utils/drawing';
@@ -206,12 +206,27 @@ export default function Canvas() {
   }, [finishDrawing, finishDragging, finishResizing, finishMarqueeSelection, isDragging, isResizing, isMarqueeSelecting]);
 
   const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
+    (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
+        
+        const rect = canvasRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        const canvasX = (mouseX - panOffset.x) / zoom;
+        const canvasY = (mouseY - panOffset.y) / zoom;
+        
         const delta = -e.deltaY * 0.001;
         const newZoom = Math.min(Math.max(0.1, zoom + delta), 5);
+        
+        const newPanOffsetX = mouseX - canvasX * newZoom;
+        const newPanOffsetY = mouseY - canvasY * newZoom;
+        
         useCanvasStore.getState().setZoom(newZoom);
+        setPanOffset({ x: newPanOffsetX, y: newPanOffsetY });
       } else {
         setPanOffset({
           x: panOffset.x - e.deltaX,
@@ -221,6 +236,17 @@ export default function Canvas() {
     },
     [zoom, panOffset, setPanOffset]
   );
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      canvas.removeEventListener('wheel', handleWheel);
+    };
+  }, [handleWheel]);
 
   const renderElement = (element: Element, isPreview: boolean = false) => {
     const isSelected = selectedElementIds.includes(element.id) && !isPreview;
@@ -459,7 +485,6 @@ export default function Canvas() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
-      onWheel={handleWheel}
       style={{ touchAction: 'none' }}
     >
       <svg className={styles.gridBackground}>

